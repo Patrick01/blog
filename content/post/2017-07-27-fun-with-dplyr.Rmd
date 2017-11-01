@@ -1,0 +1,53 @@
+---
+title: fun with dplyr
+author: Patrick
+date: '2017-07-27'
+slug: fun-with-dplyr
+categories:
+  - R
+tags: ["dplyr"]
+---
+
+
+## The dplyr package
+
+this post will show the basics of the dplyr package. There are a lot of helper functions inside the pacakge, but the main function, which it is all about, are just five. 
+
+They are: select, filter, mutate, summarize, arrange
+
+Let's have a look at these functions and also have a look at the new datasets in the current release of the package. So, there seems to be a datasets of storms
+
+
+```{r, warning=FALSE}
+library(dplyr)
+dplyr::storms
+
+```
+
+
+## filter 
+
+Let us start with the filter function. The idea of the filter function is very easy. You filter out observations which fullfill a given critera. If we have a look at the data above, what is a possible criteria? One obvious criteria is to filter out a given year.
+
+```{r}
+filter(storms, year == 1975)
+```
+
+You will regularly forget the second equal sign, when checking for equality, but otherwise the function looks pretty easy. You put in the dataset storms as the first argument and then write the critera you will filter for. Look at the function and speak after me: We filter the storms dataset for observations where the variable year equals 1975
+
+Of course we can imagine a few different criteras. Think about what happens and then run it for yourself. 
+
+```{r, eval=FALSE}
+filter(storms, status == "tropical storm", wind > 50)
+```
+
+## mutate
+
+After we selected the right observations with the filter function, we oftentimes need to change some variable or create a new variable. This is the job for the mutate function. The mutate function is the nicest thing you will come across, keep it close in your comming R adventures. 
+
+
+
+
+
+
+

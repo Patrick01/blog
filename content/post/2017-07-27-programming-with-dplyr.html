@@ -1,0 +1,41 @@
+---
+title: Programming with dplyr
+author: Patrick
+date: '2017-07-27'
+slug: programming-with-dplyr
+categories:
+  - R
+tags:
+  - dplyr
+---
+
+
+
+<div id="programming-with-dplyr" class="section level2">
+<h2>Programming with dplyr</h2>
+<p>One of the new things is the programming with dplyr. The following shows what it is</p>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Attache Paket: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>df &lt;- data_frame(cat1 = rep(c(&quot;A&quot;, &quot;B&quot;), each = 3), 
+                 cat2 = rep(c(&quot;X&quot;, &quot;Y&quot;), 3), 
+                 value = 1:6)
+
+
+var &lt;- quo(cat1)
+
+group_by(df, UQE(var)) %&gt;% 
+  summarize(s = sum(value))</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##    cat1     s
+##   &lt;chr&gt; &lt;int&gt;
+## 1     A     6
+## 2     B    15</code></pre>
+<p>So why do we need UQE and cannot use !!. Let’s find out</p>
+</div>

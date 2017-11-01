@@ -1,0 +1,89 @@
+---
+title: Simulation
+author: Patrick
+date: '2017-07-26'
+slug: simulation
+categories: []
+tags: []
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+## Simulation
+
+Let's roll with another post. Today we will look at a simulation. A simulation is the artificial creation of outcomes of some process. 
+
+One easy case is just the simulation of a draw from a random variable. The most often used one is the normal random variable. Let's have a look at ten draws from a normal random variable. and where they they lie on the x-axis
+
+```{r}
+x <-  rnorm(10)
+
+ggplot(data_frame(x), aes(x, y = 0)) + 
+  geom_point() + 
+  lims(y = c(0, 2)) +
+  labs(x = NULL, y = NULL) +
+  theme_minimal()
+  
+```
+
+So, what will happen if we simulate one million draws and stack the points on top of each other when they fall into the same little intervall on the x-axis? As you can imagine we will see the shape of the famous bell-curve
+
+```{r}
+x <- rnorm(1e6)
+
+ggplot(data_frame(x), aes(x)) + 
+  geom_histogram(bins = 100)
+```
+
+Nice. Now that we warmed up with a simple underlying process. We will move on to a time series. Many interesting phenomenons have to be studied with a time series process. In my line of work it is most of the time the development of financial figures, e.g. the price of a stock or a interest rate. 
+
+The easiest stochastic time series process is the random work. It is described as follows:
+
+x(t+1) = x(t) + noise
+
+This just means we take the current value x(t) and add some randomness, i.e. in most cases it is just one draw from a random normal variable. 
+
+This looks as follows 
+
+```{r}
+noise <- rnorm(100)
+x_t <- cumsum(noise)
+
+ggplot(data_frame(t = 1:100, x_t), aes(t, x_t)) + 
+  geom_path()
+```
+
+
+
+You probably expected to generate the time series with a for-loop, but the random walk is so simple that no for-loop is necessary.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

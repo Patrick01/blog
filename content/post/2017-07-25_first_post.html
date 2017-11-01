@@ -1,0 +1,50 @@
+---
+title: "First Post"
+author: "Patrick"
+date: "2017-07-25"
+categories: ["R"]
+tags: ["R Markdown", "plot", "regression"]
+---
+
+
+
+<div id="first-post" class="section level2">
+<h2>First Post</h2>
+<p>Hallo zusammen,</p>
+<p>das ist mein erster Blogeintrag. Zuersteinmal bleibt das hier privat und wir werden sehen ob sich ein ansprechender Content entwickelt. Die Idee ist hauptsächlich über R zu schreiben. Kleine Tid-Bits an die ich mich gerne erinnern möchte.</p>
+</div>
+<div id="stringi" class="section level2">
+<h2>Stringi</h2>
+<p>als Erstes schauen wir uns an, wie das mit den Charclasses in dem stringi-package funktioniert. ich möchte alle Sonderzeichen entfernen. Dafür gibt es die passenden <code>_replace_</code> funktionen. Da wir wissen, dass wir Sonderzeichen entfernen wollen, wählen das Argument charclass. Die stringi Funktionen haben zum einen die charclasse / fixed / regexp als Argument oder wie im folgenden Beispiel als Teil des Funktionsnamen:</p>
+<pre class="r"><code>library(stringi)
+beispiel &lt;- &quot;IchBin#a92#&quot;
+stringi::stri_replace_all_charclass(beispiel, pattern = &quot;[^a-zA-Z]&quot;, &quot;&quot;)</code></pre>
+<pre><code>## [1] &quot;IchBina&quot;</code></pre>
+<p>Das hat ja schonmal geklappt. Jetzt suchen wir noch den passenden Charclass für alle Zeichen, die keine Buchstaben sind.</p>
+<pre class="r"><code>bsp2 &lt;- &quot;a&quot;
+bsp_vec &lt;- c(&quot;Haasdj2ßd#&quot;, &quot;q2ß439ru qwdf&quot;)
+stringi::stri_extract_all_charclass(beispiel, pattern = &quot;[\\p{numeric_value = 9}]&quot;, merge = TRUE) </code></pre>
+<pre><code>## [[1]]
+## [1] &quot;9&quot;</code></pre>
+<p>If we now apply our skills to vector we see that the result is a list. Everytime a list is the result i have difficulties working with the result. For example i want a vector of the result merged together as one string</p>
+<pre class="r"><code>stringi::stri_extract_all_charclass(bsp_vec, pattern = &quot;[\\p{Lc}]&quot;, merge = TRUE) %&gt;% 
+  map(paste, sep = &quot; &quot;)</code></pre>
+<pre><code>## [[1]]
+## [1] &quot;Haasdj&quot; &quot;ßd&quot;    
+## 
+## [[2]]
+## [1] &quot;q&quot;    &quot;ß&quot;    &quot;ru&quot;   &quot;qwdf&quot;</code></pre>
+<p>Why, did this not work? And how do we check what is happening inside the map command?</p>
+<p>The reason is that paste takes each character vector as one argument and would paste it to another. Take a look:</p>
+<pre class="r"><code>paste0(c(&quot;dre&quot;, &quot;zwo&quot;), &quot;dre&quot;)</code></pre>
+<pre><code>## [1] &quot;dredre&quot; &quot;zwodre&quot;</code></pre>
+<p>so, but how do we archive our goal and give paste the character vector and join it togehter?</p>
+<p>Fortunatley there is an argument for this situation in the paste function. It is called collapse</p>
+<pre class="r"><code>paste0(c(&quot;dre&quot;, &quot;zwo&quot;), collapse = &quot; &quot;)</code></pre>
+<pre><code>## [1] &quot;dre zwo&quot;</code></pre>
+<pre class="r"><code>res &lt;- stringi::stri_extract_all_charclass(bsp_vec, pattern = &quot;[\\p{Lc}]&quot;, merge = TRUE)</code></pre>
+<p>And we are at our aim.</p>
+<pre class="r"><code>map_chr(res, paste, collapse = &quot; &quot;)</code></pre>
+<pre><code>## [1] &quot;Haasdj ßd&quot;   &quot;q ß ru qwdf&quot;</code></pre>
+<p>Thanks for listening. Talk to you tomorrow</p>
+</div>
