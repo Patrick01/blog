@@ -1,0 +1,69 @@
+---
+title: Animating Progress
+author: ''
+date: '2018-01-20'
+slug: animating-progress
+categories:
+  - R
+tags: []
+---
+
+# See how to animate my pull progress
+
+This post will make a fancier graphic of my progress as well as learning about the tweenr or gganmiate package. 
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+library(readr)
+
+push_pull <- push_pull <- gsheet::gsheet2tbl("https://docs.google.com/spreadsheets/d/1WVgOIEIbnRDNG2AM_ZlEMjSc7w9HsA7YfhwbZ86iyKM/")
+log_pp_agg <- push_pull %>%
+  filter_all(any_vars(!is.na(.))) %>% 
+  fill(date) %>%
+  gather(excercise, count, -date) %>% 
+  group_by(date, excercise) %>% 
+  summarize(count = sum(count), 
+            n = n())
+```
+
+
+```{r}
+push <- filter(log_pp_agg, excercise == "push")
+pull <- filter(log_pp_agg, excercise == "pull") %>% 
+  mutate(date_frame = date)
+
+pull
+```
+
+```{r}
+p <- ggplot(pull, aes(date, count, frame = date_frame)) + 
+  geom_point(aes(cumulative = TRUE)) + 
+  geom_line(aes(cumulative = TRUE)) +
+  labs(x = NULL, y = NULL) + 
+  scale_y_continuous(breaks = seq(0, 100, by = 10), limits = c(0, NA)) + 
+  scale_x_date(breaks = seq.Date(as.Date("2017-12-27"), 
+                                 as.Date("2018-01-25"), 
+                                 by = "days"), 
+               limits = c(as.Date("2017-12-27"), as.Date("2018-01-25"))) + 
+  scale_fill_manual(values = c("TRUE" = "green", "FALSE" = "red", "NA" = "grey")) + 
+  theme_light() +
+  theme(panel.grid = element_blank(), 
+        panel.grid.major.y = element_line(size = 0.1), 
+        axis.text.x = element_text(angle = 90), 
+        legend.position = "none") + 
+  stat_smooth(method = "lm")
+```
+
+After reinstalling magick with the necessary legacy function "convert"" it worked: 
+
+```{r}
+library(gganimate)
+gganimate(p)
+
+```
+
+Soo. now i want to get this thing with tweenr. tweenr is used to create smoother transition from one state to the next. 
+
