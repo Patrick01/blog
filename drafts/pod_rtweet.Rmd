@@ -1,0 +1,48 @@
+---
+title: "PoD - rtweet"
+author: "Patrick"
+date: "1 November 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Package of the Day: rtweet
+
+```{r, results="hide", warning=FALSE, message = FALSE}
+library(rtweet)
+library(ggplot2)
+library(dplyr)
+```
+
+```{r}
+appname <- "patrick-twitter-app"
+key <- "T6mYVywhvFaADU2QTvZHkeZQ5"
+
+secret <- "BlD65qE6kCUEtoSG3IdxVJWD3j9DK92E9aD5obUjKmn5dCptyy"
+```
+
+
+```{r}
+twitter_token <- create_token(
+  app = appname, 
+  consumer_key = key, 
+  consumer_secret = secret
+)
+```
+
+```{r}
+rt <- search_tweets("rstats", n = 1000, token = twitter_token)
+```
+
+```{r, warning=FALSE}
+favs <- rtweet::get_favorites("pmarca")
+```
+
+```{r}
+count(rt, screen_name) %>% 
+  filter(n > 2)
+```
+
