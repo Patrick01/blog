@@ -1,0 +1,145 @@
+---
+title: Ridgeline Plot
+author: Patrick
+date: '2018-01-26'
+slug: ridgeline-plot
+categories:
+  - R
+tags:
+  - gganmiate
+  - ridgline
+  - dplyr
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+library(readr)
+
+push_pull <- push_pull <- gsheet::gsheet2tbl("https://docs.google.com/spreadsheets/d/1WVgOIEIbnRDNG2AM_ZlEMjSc7w9HsA7YfhwbZ86iyKM/")
+
+log_pp_agg <- push_pull %>%
+  filter_all(any_vars(!is.na(.))) %>% 
+  fill(date) %>%
+  gather(excercise, count, -date) %>% 
+  group_by(date, excercise) %>% 
+  summarize(count = sum(count), 
+            n = n())
+
+pull_sets <- push_pull %>% 
+  filter_all(any_vars(!is.na(.))) %>% 
+  fill(date) %>% 
+  filter(pull != 0) %>% 
+  select(-push)
+
+
+library(scales)
+c_trans <- function(a, b, breaks = b$breaks, format = b$format) {
+  a <- as.trans(a)
+  b <- as.trans(b)
+
+  name <- paste(a$name, b$name, sep = "-")
+
+  trans <- function(x) a$trans(b$trans(x))
+  inv <- function(x) b$inverse(a$inverse(x))
+
+  trans_new(name, trans, inv, breaks, format)
+}
+
+t <- (as.trans("date"))
+t$transform(as.Date("2017-12-12"))
+
+rev_date <- c_trans("reverse", "date")
+
+```
+
+I have a dataset pull, which shows all my pull-up sets since recording. My aim is to use a ridgeline plot and visualize all the sets i have done sofar. As you can see, pretty weakly. 
+
+```{r}
+pull_sets
+```
+
+A ridgeplot will plot distribution for each date. The date will be plotted on the y-axis and the response variable, number of pull-ups on the x-axis. The following plots shows one example distribution
+
+```{r}
+ggplot(filter(pull_sets, date == as.Date("2017-12-29")), aes(pull)) + 
+  geom_count()
+```
+
+
+
+```{r}
+ggplot(pull_sets, aes(pull)) + 
+  geom_density() +
+  theme(axis.title = element_text(size = 16), 
+        axis.text = element_text(size = 14))
+```
+
+
+
+```{r}
+ggplot(pull_sets, aes(date, factor(pull))) + 
+  geom_bin2d() + 
+  theme_minimal() +
+  theme(legend.position = "top")
+```
+
+```{r}
+ggplot(pull_sets, aes(date, factor(pull))) + 
+  geom_jitter(width = 0, height = 0.2) + 
+  theme_minimal()
+```
+
+Let's flip this
+
+
+```{r}
+ggplot(pull_sets, aes(pull, date)) + 
+  geom_jitter(width = 0.2, height = 0) + 
+  scale_y_date(name = NULL, 
+               breaks = function(lim) seq.Date(lim[1], lim[2], by = "days")) +
+  scale_x_continuous(breaks = 1:6) + 
+  theme_minimal()
+```
+
+
+```{r}
+ggplot(pull_sets, aes(pull, date)) + 
+  geom_jitter(width = 0.2, height = 0) + 
+  scale_y_continuous(name = NULL, 
+                     trans = rev_date, breaks = function(lim) seq.Date(lim[2], lim[1], by = "days")) +
+  scale_x_continuous(name = NULL, breaks = 1:6) +
+  theme_minimal() + 
+  theme(panel.grid.major.x = element_blank(), 
+        panel.grid.minor.x = element_line(colour = "black")) +
+  ggtitle("Pulls per Date")
+```
+
+
+
+Know i would like to animate this one. For this we need a variable which determines what our frames will look like. I want to add each point separatly. Therefore we give each row a unique frame/id
+
+```{r}
+pull_sets$id <- seq_len(nrow(pull_sets))
+```
+
+
+```{r}
+library(gganimate)
+p <- ggplot(pull_sets, aes(pull, date, frame = id)) + 
+  geom_jitter(aes(cumulative = TRUE), width = 0.2, height = 0) + 
+  scale_y_continuous(name = NULL, 
+                     trans = rev_date, breaks = function(lim) seq.Date(lim[2], lim[1], by = "days")) +
+  scale_x_continuous(name = NULL, breaks = 1:6) +
+  theme_minimal() + 
+  theme(panel.grid.major.x = element_blank(), 
+        panel.grid.minor.x = element_line(colour = "black")) +
+  ggtitle("Pulls per Date")
+```
+
+
+
+
+

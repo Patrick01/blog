@@ -1,0 +1,34 @@
+---
+title: Fourier Transform in R
+author: Patrick
+date: '2018-01-28'
+slug: fourier-transform-in-r
+categories:
+  - R
+  - math
+tags:
+  - concepts
+---
+
+
+The unbelievable good math channel 3Blue1Brown has a video about the [Fourier Transformation](https://www.youtube.com/watch?v=spUNpyF58BY). I want to try some things from there in R. I will further copy/steal from the [notes](http://www.di.fc.ul.pt/~jpn/r/fourier/fourier.html) about the Fourier Transform from Joao Neto. 
+
+The video says that one feature is the decomposition of waves to their underlying components. 
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(patchwork)
+
+waves <- data_frame(xs = seq(-2 * pi, 2 * pi, pi/100), 
+                    wave1 = sin(3 * xs), 
+                    wave2 = sin(10 * xs), 
+                    comb = wave1 + wave2)
+
+plot1 <- ggplot(waves, aes(xs, wave1)) + geom_line()
+plot2 <- ggplot(waves, aes(xs, wave2)) + geom_line()
+plot3 <- ggplot(waves, aes(xs, comb)) + geom_line()
+
+(plot1 + plot2) / plot3
+```
+
