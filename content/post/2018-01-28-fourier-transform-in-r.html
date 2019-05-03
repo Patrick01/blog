@@ -1,0 +1,45 @@
+---
+title: Fourier Transform in R
+author: Patrick
+date: '2018-01-28'
+slug: fourier-transform-in-r
+categories:
+  - R
+  - math
+tags:
+  - concepts
+---
+
+
+
+<p>The unbelievable good math channel 3Blue1Brown has a video about the <a href="https://www.youtube.com/watch?v=spUNpyF58BY">Fourier Transformation</a>. I want to try some things from there in R. I will further copy/steal from the <a href="http://www.di.fc.ul.pt/~jpn/r/fourier/fourier.html">notes</a> about the Fourier Transform from Joao Neto.</p>
+<p>The video says that one feature is the decomposition of waves to their underlying components.</p>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(ggplot2)</code></pre>
+<pre><code>## Registered S3 methods overwritten by &#39;ggplot2&#39;:
+##   method         from 
+##   [.quosures     rlang
+##   c.quosures     rlang
+##   print.quosures rlang</code></pre>
+<pre class="r"><code>library(patchwork)
+
+waves &lt;- data_frame(xs = seq(-2 * pi, 2 * pi, pi/100), 
+                    wave1 = sin(3 * xs), 
+                    wave2 = sin(10 * xs), 
+                    comb = wave1 + wave2)</code></pre>
+<pre><code>## Warning: `data_frame()` is deprecated, use `tibble()`.
+## This warning is displayed once per session.</code></pre>
+<pre class="r"><code>plot1 &lt;- ggplot(waves, aes(xs, wave1)) + geom_line()
+plot2 &lt;- ggplot(waves, aes(xs, wave2)) + geom_line()
+plot3 &lt;- ggplot(waves, aes(xs, comb)) + geom_line()
+
+(plot1 + plot2) / plot3</code></pre>
+<p><img src="/post/2018-01-28-fourier-transform-in-r_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
