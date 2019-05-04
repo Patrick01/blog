@@ -20,6 +20,8 @@ ggplot(data_frame(x), aes(x, y = 0)) +
   lims(y = c(0, 2)) +
   labs(x = NULL, y = NULL) +
   theme_minimal()</code></pre>
+<pre><code>## Warning: `data_frame()` is deprecated, use `tibble()`.
+## This warning is displayed once per session.</code></pre>
 <p><img src="/post/2017-07-26-simulation_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
 <p>So, what will happen if we simulate one million draws and stack the points on top of each other when they fall into the same little intervall on the x-axis? As you can imagine we will see the shape of the famous bell-curve</p>
 <pre class="r"><code>x &lt;- rnorm(1e6)
