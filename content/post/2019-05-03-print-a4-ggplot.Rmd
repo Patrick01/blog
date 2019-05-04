@@ -7,9 +7,15 @@ categories: []
 tags: [ggplot2]
 ---
 
-# 
 
-```{r}
+
+```{example, label="ex1", name="Creating a Graph"}
+I will show how to make fine art
+```
+
+and now i can refer to the label and can write: If you want to now how to make fine art look at Example \@ref(exm:ex1)
+
+```{r warning = FALSE, message = FALSE}
 library(ambient)
 library(tidyverse)
 library(ptrick)
